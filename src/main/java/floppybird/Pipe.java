@@ -21,6 +21,6 @@ public class Pipe {
     }
 
     public void update() {
-        this.x -= this.velocity; // Move the pipe to the left
+        this.x -= this.velocity;
     }
 }
