@@ -2,6 +2,7 @@ package floppybird;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -16,7 +17,7 @@ import javax.swing.Timer;
 
 public class FloppyBird extends JPanel implements ActionListener, KeyListener {
 
-    int BOARD_HEIGHT = 640;
+    int  BOARD_HEIGHT = 640;
     int BOARD_WIDTH = 360;
     int SCORE = 0;
     boolean GAME_OVER = false;
@@ -81,7 +82,15 @@ public class FloppyBird extends JPanel implements ActionListener, KeyListener {
     }
 
     public void draw(Graphics g){
+        //Background
         g.drawImage(this.backgroundImage, 0, 0, this.BOARD_WIDTH, this.BOARD_HEIGHT, null );
+
+        //Score
+        g.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        g.setColor(Color.WHITE);
+        g.drawString(Integer.toString(this.SCORE / 2), 10, 40);
+
+        // Bird
         g.drawImage(bird.img, bird.x, bird.y, bird.width, bird.height, null);
 
         for (int i = 0; i < pipes.size(); i++) {
@@ -100,8 +109,9 @@ public class FloppyBird extends JPanel implements ActionListener, KeyListener {
                 this.GAME_OVER = true;
             }
 
-            if(pipe.hasPassed()){
+            if(pipe.hasPassed() && !pipe.scored){
                 this.SCORE++;
+                pipe.scored = true;
             }
         }
     }

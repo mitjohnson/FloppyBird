@@ -10,6 +10,7 @@ public class Pipe {
     Image img;
 
     boolean passed = false;
+    boolean scored = false;
     int velocity = 2;
 
     Pipe(int xCord, int yCord, int width, int height, Image img){
