@@ -10,7 +10,7 @@ import java.awt.Image;
     Image img;
 
     private int velocity = 0;
-    private int gravity = 1;
+    private final int gravity = 1;
 
     Bird(int xCord, int yCord, int width, int height, Image img) {
         this.x = xCord;

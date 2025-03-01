@@ -18,6 +18,8 @@ public class FloppyBird extends JPanel implements ActionListener, KeyListener {
 
     int BOARD_HEIGHT = 640;
     int BOARD_WIDTH = 360;
+    int SCORE = 0;
+    boolean GAME_OVER = false;
 
     Image birdImage;
     Image backgroundImage;
@@ -29,6 +31,7 @@ public class FloppyBird extends JPanel implements ActionListener, KeyListener {
 
     Timer gameLoop;
     Timer placePipesTimer;
+    int pipeSpeed;
     
     FloppyBird(){
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
@@ -45,12 +48,12 @@ public class FloppyBird extends JPanel implements ActionListener, KeyListener {
         // load bird
         int birdX = this.BOARD_WIDTH / 8;
         int birdY = this.BOARD_HEIGHT / 2;
-        this.bird = new Bird(birdX, birdY, 34, 24, birdImage);
+        this.bird = new Bird(birdX, birdY, 34, 24, this.birdImage);
         this.pipes = new ArrayList<>();
 
         // pipes timer
-        int pipeSpeed = 3000;
-        this.placePipesTimer = new Timer(pipeSpeed, (ActionEvent e) -> {
+        this.pipeSpeed = 3000;
+        this.placePipesTimer = new Timer(this.pipeSpeed, (ActionEvent e) -> {
             placePipes();
         });
         this.placePipesTimer.start();
@@ -91,14 +94,19 @@ public class FloppyBird extends JPanel implements ActionListener, KeyListener {
         this.bird.update();
 
         for (Pipe pipe : this.pipes) {
-            pipe.update();
+            pipe.update(this.bird);
+
             if(checkCollision(this.bird, pipe)){
-                System.out.println("YOU GOT HIT!!");
+                this.GAME_OVER = true;
+            }
+
+            if(pipe.hasPassed()){
+                this.SCORE++;
             }
         }
     }
 
-    public boolean checkCollision(Bird bird, Pipe pipe){
+    private boolean checkCollision(Bird bird, Pipe pipe){
 
         // get bird position and size.
         int birdX = bird.x;
@@ -106,7 +114,6 @@ public class FloppyBird extends JPanel implements ActionListener, KeyListener {
         int birdHeight = bird.height;
         int birdWidth = bird.width;
 
-        
         // get pipe postion and size.
         int pipeX = pipe.x;
         int pipeY = pipe.y;
@@ -139,14 +146,16 @@ public class FloppyBird extends JPanel implements ActionListener, KeyListener {
     public void actionPerformed(ActionEvent e) {
         update();
         repaint();
+        if (this.GAME_OVER){
+            this.placePipesTimer.stop();
+            this.gameLoop.stop();
+        }
     }
-
 
     @Override
     public void keyTyped(KeyEvent e) {
         
     }
-
 
     @Override
     public void keyReleased(KeyEvent e) {

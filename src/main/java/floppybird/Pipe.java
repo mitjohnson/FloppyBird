@@ -9,7 +9,7 @@ public class Pipe {
     int height;
     Image img;
 
-    private boolean passed = false;
+    boolean passed = false;
     int velocity = 2;
 
     Pipe(int xCord, int yCord, int width, int height, Image img){
@@ -20,7 +20,15 @@ public class Pipe {
         this.img = img;
     }
 
-    public void update() {
+    public void update(Bird bird) {
         this.x -= this.velocity;
+
+        if (!this.passed && this.x + this.width < bird.x) {
+            this.passed = true;
+        }
+    }
+
+    public boolean hasPassed(){
+        return this.passed;
     }
 }
