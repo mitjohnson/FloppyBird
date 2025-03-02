@@ -1,17 +1,14 @@
 package floppybird;
 
+import java.awt.Graphics;
 import java.awt.Image;
 
-public class Pipe {
-    int x;
-    int y;
-    int width;
-    int height;
-    Image img;
+class Pipe {
 
-    boolean passed = false;
-    boolean scored = false;
-    int velocity = 2;
+    private final Image img;
+
+    public int x, y, width, height, velocity;
+    public boolean passed, scored;
 
     Pipe(int xCord, int yCord, int width, int height, Image img){
         this.x = xCord;
@@ -19,6 +16,9 @@ public class Pipe {
         this.width = width;
         this.height = height;
         this.img = img;
+        this.passed = false;
+        this.scored = false;
+        this.velocity = 2;
     }
 
     public void update(Bird bird) {
@@ -27,6 +27,10 @@ public class Pipe {
         if (!this.passed && this.x + this.width < bird.x) {
             this.passed = true;
         }
+    }
+
+    public void draw(Graphics g){
+        g.drawImage(this.img, this.x, this.y, this.width, this.height, null);
     }
 
     public boolean hasPassed(){

@@ -1,16 +1,14 @@
 package floppybird;
+import java.awt.Graphics;
 import java.awt.Image;
 
  class Bird {
 
-    int x;
-    int y;
-    int width;
-    int height;
-    Image img;
-
-    private int velocity = 0;
+    private final Image img;
     private final int gravity = 1;
+    private int velocity = 0;
+
+    public int x, y, width, height;
 
     Bird(int xCord, int yCord, int width, int height, Image img) {
         this.x = xCord;
@@ -29,6 +27,10 @@ import java.awt.Image;
             this.y = 640 - this.height;
             this.velocity = 0;
         }
+    }
+
+    public void draw(Graphics g){
+        g.drawImage(this.img, this.x, this.y, this.width, this.height, null);
     }
 
     public void flap() {

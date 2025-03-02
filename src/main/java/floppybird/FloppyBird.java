@@ -5,112 +5,73 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
-public class FloppyBird extends JPanel implements ActionListener, KeyListener {
+public class FloppyBird extends JPanel implements KeyListener {
 
-    int  BOARD_HEIGHT = 640;
-    int BOARD_WIDTH = 360;
-    int SCORE = 0;
-    boolean GAME_OVER = false;
-
-    Image birdImage;
-    Image backgroundImage;
-    Image topPipeImage;
-    Image bottomPipeImage;
-
-    Bird bird;
-    ArrayList<Pipe> pipes;
-
-    Timer gameLoop;
-    Timer placePipesTimer;
-    int pipeSpeed;
+    private final Image birdImage, backgroundImage;
+    private final int BOARD_HEIGHT, BOARD_WIDTH;
+    private final PipeManager pipeManager;
+    private final GameController gameController;
+    private final Bird bird;
     
-    FloppyBird(){
-        setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
-        setBackground(Color.BLACK);
+    public int score = 0;
+    
+    FloppyBird(int WINDOW_WIDTH, int WINDOW_HEIGHT, PipeManager pipeManager, GameController gameController){
+
+        this.BOARD_WIDTH = WINDOW_WIDTH;
+        this.BOARD_HEIGHT = WINDOW_HEIGHT;
+
+        setPreferredSize(new Dimension(this.BOARD_WIDTH, this.BOARD_HEIGHT));
         setFocusable(true);
-        addKeyListener(this);
+        addKeyListener(FloppyBird.this);
 
         // load images
         this.backgroundImage = new ImageIcon(getClass().getResource("./assets/flappybirdbg.png")).getImage();
         this.birdImage = new ImageIcon(getClass().getResource("./assets/flappybird.png")).getImage();
-        this.topPipeImage = new ImageIcon(getClass().getResource("./assets/toppipe.png")).getImage();
-        this.bottomPipeImage = new ImageIcon(getClass().getResource("./assets/bottompipe.png")).getImage();
 
         // load bird
         int birdX = this.BOARD_WIDTH / 8;
         int birdY = this.BOARD_HEIGHT / 2;
         this.bird = new Bird(birdX, birdY, 34, 24, this.birdImage);
-        this.pipes = new ArrayList<>();
 
-        // pipes timer
-        this.pipeSpeed = 3000;
-        this.placePipesTimer = new Timer(this.pipeSpeed, (ActionEvent e) -> {
-            placePipes();
-        });
-        this.placePipesTimer.start();
-
-        // init timer
-        this.gameLoop = new Timer(1000/60, this);
-        this.gameLoop.start(); 
-    }
-
-    public void placePipes() {
-
-        int pipeGap = this.BOARD_HEIGHT / 4;
-
-        Pipe topPipe = new Pipe(this.BOARD_WIDTH,getRandomPipePosition(512), 64, 512, this.topPipeImage);
-        pipes.add(topPipe);
-
-        Pipe bottomPipe = new Pipe(this.BOARD_WIDTH, 0, 64, 512, this.bottomPipeImage);
-        bottomPipe.y = topPipe.y + 512 + pipeGap;
-        pipes.add(bottomPipe);
-
-    }
-
-    private int getRandomPipePosition(int pipeHeight){
-        return (int)(0 - pipeHeight / 4 - Math.random()*(pipeHeight / 2));
+        // load pipe manager and game controller
+        this.pipeManager = pipeManager;
+        this.gameController = gameController;
     }
 
     public void draw(Graphics g){
-        //Background
         g.drawImage(this.backgroundImage, 0, 0, this.BOARD_WIDTH, this.BOARD_HEIGHT, null );
+
+        bird.draw(g);
+
+        for (Pipe pipe : this.pipeManager.getList()) {
+            pipe.draw(g);
+        }
 
         //Score
         g.setFont(new Font("Times New Roman", Font.BOLD, 40));
         g.setColor(Color.WHITE);
-        g.drawString(Integer.toString(this.SCORE / 2), 10, 40);
-
-        // Bird
-        g.drawImage(bird.img, bird.x, bird.y, bird.width, bird.height, null);
-
-        for (int i = 0; i < pipes.size(); i++) {
-            Pipe pipe = pipes.get(i);
-            g.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height, null);
-        }
+        g.drawString(Integer.toString(this.score / 2), 10, 40);
     }
 
     public void update(){
         this.bird.update();
 
-        for (Pipe pipe : this.pipes) {
+        for (Pipe pipe : this.pipeManager.getList()) {
             pipe.update(this.bird);
 
             if(checkCollision(this.bird, pipe)){
-                this.GAME_OVER = true;
+                this.gameController.gameRunning = false;
+                this.gameController.gameOver = true;
             }
 
             if(pipe.hasPassed() && !pipe.scored){
-                this.SCORE++;
+                this.score++;
                 pipe.scored = true;
             }
         }
@@ -135,14 +96,14 @@ public class FloppyBird extends JPanel implements ActionListener, KeyListener {
                 return true;
             }
         }
-    
         return false;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            bird.flap();
+
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_SPACE -> bird.flap();
         }
     }
 
@@ -151,23 +112,10 @@ public class FloppyBird extends JPanel implements ActionListener, KeyListener {
         super.paintComponent(g);
         draw(g);
     }
+    
+    @Override
+    public void keyTyped(KeyEvent e) {}
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        update();
-        repaint();
-        if (this.GAME_OVER){
-            this.placePipesTimer.stop();
-            this.gameLoop.stop();
-        }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-    }
+    public void keyReleased(KeyEvent e) {}
 }

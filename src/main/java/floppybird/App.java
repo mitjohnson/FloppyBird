@@ -1,23 +1,46 @@
 package floppybird;
 
-import javax.swing.JFrame;
+import java.awt.Dimension;
 
-public class App {
+import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+
+public class App extends JPanel{
+    
+    private final Menu menu;
+    private GameController gameController;
+
+    public JFrame frame;
+
+    public App(int windowWidth, int windowHeight){
+
+        // initialize window and panel
+        this.frame = new JFrame("Floppy Bird");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(windowWidth, windowHeight);
+
+        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane.add(this.gameController.getFloppyBirdPanel(), JLayeredPane.DEFAULT_LAYER);
+        layeredPane.setPreferredSize(new Dimension(windowWidth, windowHeight));
+
+        // load Game controller
+        this.gameController = new GameController(windowWidth, windowHeight);
+        this.gameController.getFloppyBirdPanel().setBounds(0, 0, windowWidth, windowHeight);
+        this.gameController.gameRunning = false;
+
+        this.menu = new Menu(windowWidth, windowHeight, this, this.gameController, layeredPane);
+        this.menu.ShowStartButton("Start Game");
+
+        frame.add(layeredPane);
+        frame.setVisible(true);
+    }
     public static void main(String[] args) {
 
-        // initialize widow
-        int WINDOW_HEIGHT = 360;
-        int WINDOW_WIDTH = 640;
-
-        JFrame frame = new JFrame("Floppy Bird");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        // paint canvas
-        FloppyBird floppyBird = new FloppyBird();
-        frame.add(floppyBird);
-        frame.pack();
-        floppyBird.requestFocus();
-        frame.setVisible(true);
+        int WINDOW_HEIGHT = 640;
+        int WINDOW_WIDTH = 360;
+        
+        @SuppressWarnings("unused")
+        App app = new App(WINDOW_WIDTH, WINDOW_HEIGHT);
     }
 }
