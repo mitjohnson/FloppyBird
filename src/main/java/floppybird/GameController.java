@@ -47,6 +47,8 @@ public class GameController {
         this.floppyBird.score = 0;
         this.gameTimer.gameSpeed = 1000/60;
         this.floppyBird.resetBirdPosition();
+        this.pipeManager.clearPipes();
+        this.pipeManager.placePipes();
         this.gameTimer.startAll();
     }
 
