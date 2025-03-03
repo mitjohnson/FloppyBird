@@ -8,8 +8,7 @@ import javax.swing.JPanel;
 
 public class App extends JPanel{
     
-    private final Menu menu;
-    private GameController gameController;
+    private final GameController gameController;
 
     public JFrame frame;
 
@@ -21,16 +20,15 @@ public class App extends JPanel{
         frame.setSize(windowWidth, windowHeight);
 
         JLayeredPane layeredPane = new JLayeredPane();
-        layeredPane.add(this.gameController.getFloppyBirdPanel(), JLayeredPane.DEFAULT_LAYER);
-        layeredPane.setPreferredSize(new Dimension(windowWidth, windowHeight));
 
-        // load Game controller
-        this.gameController = new GameController(windowWidth, windowHeight);
+        this.gameController = new GameController(windowWidth, windowHeight, layeredPane, this);
         this.gameController.getFloppyBirdPanel().setBounds(0, 0, windowWidth, windowHeight);
         this.gameController.gameRunning = false;
 
-        this.menu = new Menu(windowWidth, windowHeight, this, this.gameController, layeredPane);
-        this.menu.ShowStartButton("Start Game");
+        layeredPane.add(this.gameController.getFloppyBirdPanel(), JLayeredPane.DEFAULT_LAYER);
+        layeredPane.setPreferredSize(new Dimension(windowWidth, windowHeight));
+
+        this.gameController.showStartMenu();
 
         frame.add(layeredPane);
         frame.setVisible(true);

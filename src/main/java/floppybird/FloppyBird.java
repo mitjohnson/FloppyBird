@@ -17,8 +17,8 @@ public class FloppyBird extends JPanel implements KeyListener {
     private final int BOARD_HEIGHT, BOARD_WIDTH;
     private final PipeManager pipeManager;
     private final GameController gameController;
-    private final Bird bird;
-    
+
+    Bird bird;
     public int score = 0;
     
     FloppyBird(int WINDOW_WIDTH, int WINDOW_HEIGHT, PipeManager pipeManager, GameController gameController){
@@ -56,28 +56,27 @@ public class FloppyBird extends JPanel implements KeyListener {
         //Score
         g.setFont(new Font("Times New Roman", Font.BOLD, 40));
         g.setColor(Color.WHITE);
-        g.drawString(Integer.toString(this.score / 2), 10, 40);
+        g.drawString(Integer.toString(this.score), 10, 40);
     }
 
+    public void resetBirdPosition(){
+        this.bird.x = this.BOARD_WIDTH / 8;
+        this.bird.y = this.BOARD_HEIGHT / 2;
+    }
     public void update(){
         this.bird.update();
-
-        for (Pipe pipe : this.pipeManager.getList()) {
-            pipe.update(this.bird);
-
+        for(Pipe pipe : this.pipeManager.getList()){
             if(checkCollision(this.bird, pipe)){
-                this.gameController.gameRunning = false;
-                this.gameController.gameOver = true;
-            }
-
-            if(pipe.hasPassed() && !pipe.scored){
-                this.score++;
-                pipe.scored = true;
+                this.gameController.showGameOverMenu();
             }
         }
     }
 
-    private boolean checkCollision(Bird bird, Pipe pipe){
+    Bird getBird(){
+        return this.bird;
+    }
+
+    boolean checkCollision(Bird bird, Pipe pipe){
 
         // get bird position and size.
         int birdX = bird.x;
@@ -104,6 +103,15 @@ public class FloppyBird extends JPanel implements KeyListener {
 
         switch (e.getKeyCode()) {
             case KeyEvent.VK_SPACE -> bird.flap();
+            case KeyEvent.VK_P -> {
+                if (!this.gameController.gameOver){
+                    if(this.gameController.gameRunning){
+                        this.gameController.pauseGame();
+                    } else {
+                        this.gameController.startGame();
+                    }
+                }
+            }
         }
     }
 

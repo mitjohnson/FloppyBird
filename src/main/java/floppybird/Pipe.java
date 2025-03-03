@@ -33,6 +33,10 @@ class Pipe {
         g.drawImage(this.img, this.x, this.y, this.width, this.height, null);
     }
 
+    public void increaseVelocity(int velocity){
+        this.velocity = velocity;
+    }
+
     public boolean hasPassed(){
         return this.passed;
     }

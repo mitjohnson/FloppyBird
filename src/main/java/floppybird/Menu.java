@@ -6,17 +6,26 @@ import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
+enum MenuState {
+    START,
+    GAME_RUNNING,
+    GAME_OVER
+}
+
 public class Menu {
 
     private final App app;
     private final GameController gameController;
     private final JPanel overlayPanel;
 
+    MenuState currentState;
     public JButton startButton;
 
 
     int WINDOW_HEIGHT, WINDOW_WIDTH;
     Menu(int WINDOW_WIDTH, int WINDOW_HEIGHT, App app, GameController gameController, JLayeredPane layeredPane){
+
+        this.currentState = MenuState.START;
 
         this.WINDOW_WIDTH = WINDOW_WIDTH;
         this.WINDOW_HEIGHT = WINDOW_HEIGHT;
@@ -35,7 +44,12 @@ public class Menu {
         this.startButton = new JButton(ButtonText);
         this.startButton.addActionListener((ActionEvent e) -> {
             this.overlayPanel.remove(this.startButton);
-            this.gameController.startGame();
+            if(this.currentState == MenuState.GAME_OVER){
+                this.gameController.restartGame();
+            } else {
+                this.gameController.startGame();
+            }
+            this.currentState = MenuState.GAME_RUNNING;
         });
         this.startButton.setBounds(this.WINDOW_WIDTH / 2 - 50, this.WINDOW_HEIGHT / 2 - 25, 100, 50);        
         this.overlayPanel.add(this.startButton);

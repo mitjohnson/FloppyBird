@@ -5,42 +5,32 @@ import javax.swing.Timer;
 
 public class GameTimer {
 
-    public Timer gameLoop, placePipesTimer;
+    public Timer gameLoop;
     private final PipeManager pipeManager;
     private final FloppyBird floppyBird;
-    private final GameController gameController;
 
-    GameTimer(PipeManager pipeManager, FloppyBird floppyBird, GameController gameController){
+
+    public int gameSpeed = 1000/60;
+
+    GameTimer(PipeManager pipeManager, FloppyBird floppyBird){
 
         this.floppyBird = floppyBird;
-        this.gameController = gameController;
-
-        this.gameLoop = new Timer(1000/60, (ActionEvent e) -> {
-            if (!this.gameController.gameRunning) {
-                return;
-            }
-
-            this.floppyBird.update();
-            this.floppyBird.repaint();
-        });
 
         this.pipeManager = pipeManager; 
-        this.placePipesTimer = new Timer(this.pipeManager.pipeSpeed, (ActionEvent e) -> {
-            if (!this.gameController.gameRunning) {
-                return;
-            }
-            this.pipeManager.placePipes();
-        });
+        this.pipeManager.placePipes();
 
+        this.gameLoop = new Timer(this.gameSpeed, (ActionEvent e) -> {
+            this.floppyBird.update();
+            this.floppyBird.repaint();
+            this.pipeManager.update();
+        });
     }
     
     public void startAll(){
         this.gameLoop.start();
-        this.placePipesTimer.start();
     }
 
     public void stopAll(){
         this.gameLoop.stop();
-        this.placePipesTimer.stop();
     }   
 }
