@@ -3,13 +3,18 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.Timer;
 
+enum GameTimerState {
+    RUNNING,
+    NOT_RUNNING
+}
+
 public class GameTimer {
 
     public Timer gameLoop;
     private final PipeManager pipeManager;
     private final FloppyBird floppyBird;
 
-
+    GameTimerState currentState;
     public int gameSpeed = 1000/60;
 
     GameTimer(PipeManager pipeManager, FloppyBird floppyBird){
@@ -25,12 +30,24 @@ public class GameTimer {
             this.pipeManager.update();
         });
     }
+
+    private GameTimerState getState(){
+        return this.currentState;
+    }
+
+    public void update(){
+        switch (getState()) {
+            case RUNNING -> startAll();
+            case NOT_RUNNING -> stopAll();
+
+        }
+    }
     
-    public void startAll(){
+    private void startAll(){
         this.gameLoop.start();
     }
 
-    public void stopAll(){
+    private void stopAll(){
         this.gameLoop.stop();
     }   
 }

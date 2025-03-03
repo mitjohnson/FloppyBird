@@ -2,6 +2,7 @@ package floppybird;
 
 import java.awt.Dimension;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -18,6 +19,7 @@ public class App extends JPanel{
         this.frame = new JFrame("Floppy Bird");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(windowWidth, windowHeight);
+        frame.setIconImage(new ImageIcon(getClass().getResource("./assets/flappybird.png")).getImage());
 
         JLayeredPane layeredPane = new JLayeredPane();
 

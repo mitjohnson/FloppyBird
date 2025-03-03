@@ -10,12 +10,15 @@ public class GameController {
 
     public boolean gameRunning, gameOver;
     private final Menu menu;
+    private final App app;
 
     public final FloppyBird floppyBird;
     private final GameTimer gameTimer;
     private final PipeManager pipeManager;
 
     public GameController(int windowWidth, int windowHeight, JLayeredPane layeredPane, App app) {
+
+        this.app = app;
 
         // load pipe manager
         this.topPipeImage = new ImageIcon(getClass().getResource("./assets/toppipe.png")).getImage();
@@ -32,13 +35,30 @@ public class GameController {
         this.menu = new Menu(windowWidth, windowHeight,app,this, layeredPane);
     }
 
+    public void stopGametimer(){
+        this.gameTimer.currentState = GameTimerState.NOT_RUNNING;
+        this.gameTimer.update();
+    }
+
+    public void startGameTimer(){
+        this.gameTimer.currentState = GameTimerState.RUNNING;
+        this.gameTimer.update();
+    }
+
     public void showStartMenu(){
-        this.menu.ShowStartButton("Start Game");
+        this.menu.currentState = MenuState.START;
+        this.menu.update();
+        this.app.frame.revalidate();
+        this.app.frame.repaint();
     }
 
     public void startGame(){
         this.gameRunning = true;
-        this.gameTimer.startAll();
+        this.menu.currentState = MenuState.GAME_RUNNING;
+        this.menu.update();
+        this.app.frame.revalidate();
+        this.app.frame.repaint();
+        startGameTimer();
     }
 
     public void restartGame(){
@@ -49,22 +69,47 @@ public class GameController {
         this.floppyBird.resetBirdPosition();
         this.pipeManager.clearPipes();
         this.pipeManager.placePipes();
-        this.gameTimer.startAll();
+        startGameTimer();
     }
 
     public void showGameOverMenu(){
+
         this.gameRunning = false;
         this.gameOver = true;
-        this.gameTimer.stopAll();
+
+        stopGametimer();
+
         this.menu.currentState = MenuState.GAME_OVER;
-        this.menu.ShowStartButton("Play Again?");
+        this.menu.update();
+
+        this.app.frame.revalidate();
+        this.app.frame.repaint();
+        
     }
 
     public void pauseGame(){
+
         this.gameRunning = false;
-        this.gameTimer.stopAll();
+
+        stopGametimer();
+
+        this.menu.currentState = MenuState.GAME_PAUSED;
+        this.menu.update();
+
+        this.app.frame.revalidate();
+        this.app.frame.repaint();
     }
 
+    public void togglePause() {
+        if(!this.gameOver){
+            if (this.gameRunning) {
+                pauseGame();
+            } else {
+                startGame();
+            }
+        }
+    }
+    
     public FloppyBird getFloppyBirdPanel() {
         return this.floppyBird;
     }

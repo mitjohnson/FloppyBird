@@ -54,9 +54,12 @@ public class FloppyBird extends JPanel implements KeyListener {
         }
 
         //Score
-        g.setFont(new Font("Times New Roman", Font.BOLD, 40));
-        g.setColor(Color.WHITE);
-        g.drawString(Integer.toString(this.score), 10, 40);
+        if (this.score != 0){
+            g.setFont(new Font("Arial Black", Font.PLAIN, 40));
+            g.setColor(Color.WHITE);
+            g.drawString(Integer.toString(this.score), this.BOARD_WIDTH / 2 - 20, 40);
+        }
+        
     }
 
     public void resetBirdPosition(){
@@ -103,15 +106,7 @@ public class FloppyBird extends JPanel implements KeyListener {
 
         switch (e.getKeyCode()) {
             case KeyEvent.VK_SPACE -> bird.flap();
-            case KeyEvent.VK_P -> {
-                if (!this.gameController.gameOver){
-                    if(this.gameController.gameRunning){
-                        this.gameController.pauseGame();
-                    } else {
-                        this.gameController.startGame();
-                    }
-                }
-            }
+            case KeyEvent.VK_P -> this.gameController.togglePause();
         }
     }
 

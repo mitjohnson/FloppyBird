@@ -62,9 +62,6 @@ public class PipeManager {
         }
     }
     
-    
-    
-
     public void increasePipesVelocity(){
         for(Pipe pipe : this.pipes){
             pipe.increaseVelocity(pipe.velocity + 1);
